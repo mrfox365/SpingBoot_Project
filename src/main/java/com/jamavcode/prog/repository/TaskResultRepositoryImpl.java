@@ -18,6 +18,23 @@ public class TaskResultRepositoryImpl implements TaskResultRepository {
                         "    JOIN task t on tr.task_id = t.task_id\r\n" + //
                         "WHERE t.subject_id = :subject_id;";
 
+    private static final String SQL_GET_TASK_RESULT_SUM_FOR_STUDENT_SUBJECT =
+                        "SELECT * FROM get_student_scores_by_subject();";
+
+    private static final String SQL_GET_TASK_RESULT_AVERAGE_FOR_TASK_SUBJECT =
+                        "SELECT * FROM get_average_scores_by_task();";
+
+    private static final String SQL_GET_TASK_RESULT_AVERAGE_FOR_SUBJECT =
+                        "SELECT\r\n" + //
+                        "    result_id,\r\n" + //
+                        "    0 AS task_id,\r\n" + //
+                        "    0 AS student_id,\r\n" + //
+                        "    CAST(AVG(score) AS NUMERIC(10, 2)) AS score\r\n" + //
+                        "FROM\r\n" + //
+                        "    get_average_scores_by_task()\r\n" + //
+                        "GROUP BY\r\n" + //
+                        "    result_id;";
+
     private static final String SQL_GET_TASK_RESULT_BY_ID =
                         "SELECT * FROM task_result WHERE result_id = :result_id;";
 
@@ -53,6 +70,21 @@ public class TaskResultRepositoryImpl implements TaskResultRepository {
             params, 
             taskResultMapper
             );
+    }
+
+    @Override
+    public List<TaskResult> getTaskResultSumForStudentSubject(){
+        return jdbcTemplate.query(SQL_GET_TASK_RESULT_SUM_FOR_STUDENT_SUBJECT, taskResultMapper);
+    }
+
+    @Override
+    public List<TaskResult> getTaskResultAverageForTaskSubject(){
+        return jdbcTemplate.query(SQL_GET_TASK_RESULT_AVERAGE_FOR_TASK_SUBJECT, taskResultMapper);
+    }
+
+    @Override
+    public List<TaskResult> getTaskResultAverageForSubject(){
+        return jdbcTemplate.query(SQL_GET_TASK_RESULT_AVERAGE_FOR_SUBJECT, taskResultMapper);
     }
 
     @Override

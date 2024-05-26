@@ -26,6 +26,21 @@ public class TaskResultServiceImpl implements TaskResultService {
     }
 
     @Override
+    public List<TaskResult> getTaskResultSumForStudentSubject(){
+        return taskResultRepository.getTaskResultSumForStudentSubject();
+    }
+
+    @Override
+    public List<TaskResult> getTaskResultAverageForTaskSubject(){
+        return taskResultRepository.getTaskResultAverageForTaskSubject();
+    }
+
+    @Override
+    public List<TaskResult> getTaskResultAverageForSubject(){
+        return taskResultRepository.getTaskResultAverageForSubject();
+    }
+
+    @Override
     public TaskResult getTaskResultById(int result_id){
         return taskResultRepository.getTaskResultById(result_id)
             .orElseThrow(() -> new TaskNotFoundExeption(result_id));

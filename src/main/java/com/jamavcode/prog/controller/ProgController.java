@@ -74,11 +74,17 @@ public class ProgController {
         List<Student> studentsReverse = studentService.getStudentBySubjectIdReverse(subject_id);
         List<Task> tasks = taskService.getTasksBySubjectId(subject_id);
         List<TaskResult> taskResults = taskResultService.getTaskResultBySubjectId(subject_id);
+        List<TaskResult> taskResultsSum = taskResultService.getTaskResultSumForStudentSubject();
+        List<TaskResult> taskResultsAverTask = taskResultService.getTaskResultAverageForTaskSubject();
+        List<TaskResult> taskResultsAverSub = taskResultService.getTaskResultAverageForSubject();
         model.addAttribute("needSubject", subjectService.getSubjectById(subject_id));
         model.addAttribute("students", students);
         model.addAttribute("studentsReverse", studentsReverse);
         model.addAttribute("tasks", tasks);
         model.addAttribute("taskResults", taskResults);
+        model.addAttribute("taskResultsSum", taskResultsSum);
+        model.addAttribute("taskResultsAverTask", taskResultsAverTask);
+        model.addAttribute("taskResultsAverSub", taskResultsAverSub);
         return "index";
     }
 

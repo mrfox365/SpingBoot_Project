@@ -41,7 +41,7 @@
             <table id="table">
                 <thead>
                     <tr>
-                        <th>Student</th>
+                        <th>Студенти</th>
                         <th th:each="task : ${tasks}">
                             <button th:text="${task.title}" 
                                     th:data-task-id="${task.task_id}"
@@ -54,11 +54,12 @@
                         <th>
                             <button onclick="openModal(event, 'insertTaskModal')">+</button>
                         </th>
+                        <th>Сумарні оцінки</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="student : ${students}">
-                        <td>
+                        <td class="studentTD">
                             <button th:text="${student.first_name + ' ' + student.last_name}"
                                     th:data-student-id="${student.student_id}"
                                     th:data-student-first-name="${student.first_name}"
@@ -68,7 +69,7 @@
                                     onclick="openModal(event, 'updateStudentModal')">
                             </button>
                         </td>
-                        <td th:each="task : ${tasks}" th:data-task-id="${task.task_id}" th:data-student-id="${student.student_id}">
+                        <td class="taskResultTD" th:each="task : ${tasks}" th:data-task-id="${task.task_id}" th:data-student-id="${student.student_id}">
                             <input type="number"
                                    th:data-task-id="${task.task_id}"
                                    th:data-student-id="${student.student_id}"
@@ -78,11 +79,27 @@
                                    th:value="${taskRes.score}"
                                    onchange="updateTaskResult(this)">
                         </td>
+                        <td class="noInputTD"></td>
+                        <td class="sumTaskResultTD noInputTD"
+                            th:each="sum : ${taskResultsSum}"
+                            th:if="${sum.student_id == student.student_id and sum.result_id == needSubject.subject_id}"
+                            th:text="${sum.score}"
+                        ></td>
                     </tr>
                     <tr>
                         <td>
                             <button onclick="openModal(event, 'insertStudentModal')">+</button>
                         </td>
+                    </tr>
+                    <tr>
+                        <td>Середні оцінки</td>
+                        <td class="noInputTD" th:each="task : ${tasks}">
+                            <case th:each="aver : ${taskResultsAverTask}"
+                            th:if="${aver.task_id == task.task_id and aver.result_id == needSubject.subject_id}"
+                            th:text="${aver.score}"></case>
+                        </td>
+                        <td class="noInputTD"></td>
+                        <td class="averSubTD noInputTD" th:each="aver : ${taskResultsAverSub}" th:if="${aver.result_id == needSubject.subject_id}" th:text="${aver.score}"></td>
                     </tr>
                 </tbody>
             </table>
@@ -107,7 +124,7 @@
             <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
         </div>
 
-        <h2>Редактування дисципліни</h2>
+        <h2>Редагування дисципліни</h2>
 
         <form id="updateSubjectForm" class="modalForm startDisplayForm">
             <input type="text" id="updateSubjectTitle" name="title" placeholder="Нова назва дисципліни" required>

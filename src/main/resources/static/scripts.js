@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function() {
     var cells = table.getElementsByTagName("td");
 
     for (var i = 0; i < cells.length; i++) {
-        if (cells[i].innerHTML.trim() === "") {
+        if (cells[i].innerHTML.trim() === "" && !cells[i].classList.contains("noInputTD")) {
             var input = document.createElement("input");
             input.type = "number";
             input.setAttribute("th:data-result-id", "0");

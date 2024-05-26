@@ -9,6 +9,12 @@ public interface TaskResultRepository {
 
     List<TaskResult> getTaskResultBySubjectId(int subject_id);
 
+    List<TaskResult> getTaskResultSumForStudentSubject();
+
+    List<TaskResult> getTaskResultAverageForTaskSubject();
+
+    List<TaskResult> getTaskResultAverageForSubject();
+
     Optional<TaskResult> getTaskResultById(int result_id);
 
     void insertTaskResult(int task_id, int student_id, double score);

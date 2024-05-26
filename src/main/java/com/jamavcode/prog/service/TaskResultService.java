@@ -8,6 +8,12 @@ public interface TaskResultService {
 
     List<TaskResult> getTaskResultBySubjectId(int subject_id);
 
+    List<TaskResult> getTaskResultSumForStudentSubject();
+
+    List<TaskResult> getTaskResultAverageForTaskSubject();
+
+    List<TaskResult> getTaskResultAverageForSubject();
+
     TaskResult getTaskResultById(int result_id);
 
     void insertTaskResult(int task_id, int student_id, double score);
