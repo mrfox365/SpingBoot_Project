@@ -214,7 +214,7 @@ public class ProgController {
 
     @PutMapping("/updateTaskResult/{result_id}/{score}")
     @ResponseBody
-    public ResponseEntity<String> updateTaskResult(@PathVariable("result_id") int result_id, @PathVariable("score") int score) {
+    public ResponseEntity<String> updateTaskResult(@PathVariable("result_id") int result_id, @PathVariable("score") double score) {
         try {
             taskResultService.updateTaskResultById(score, result_id);
             return ResponseEntity.ok("Result updated successfully");

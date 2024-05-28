@@ -108,8 +108,8 @@ $(document).ready(function() {
                 alert(response);
                 location.reload();
             })
-            .fail(function(xhr, status, error) {
-                alert("Помилка: " + xhr.responseText);
+            .fail(function(error) {
+                handleAjaxError(error);
             });
     });
 });
@@ -134,8 +134,7 @@ document.getElementById('updateSubjectForm').addEventListener('submit', function
         location.reload();
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update subject.');
+        handleAjaxError(error);
     });
 });
 
@@ -161,8 +160,7 @@ document.getElementById('updateStudentForm').addEventListener('submit', function
         location.reload();
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update student.');
+        handleAjaxError(error);
     });
 });
 
@@ -187,8 +185,7 @@ document.getElementById('updateTaskForm').addEventListener('submit', function(ev
         location.reload();
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Failed to update task.');
+        handleAjaxError(error);
     });
 });
 
@@ -204,8 +201,8 @@ function deleteSubject(event) {
             alert(response);
             location.href = '/';
         },
-        error: function(xhr, status, error) {
-            alert("Помилка: " + error);
+        error: function(error) {
+            handleAjaxError(error);
         }
     });
 
@@ -225,8 +222,8 @@ function deleteStudent(event) {
             alert(response);
             location.reload();
         },
-        error: function(xhr, status, error) {
-            alert("Помилка: " + error);
+        error: function(error) {
+            handleAjaxError(error);
         }
     });
 }
@@ -243,8 +240,8 @@ function deleteTask(event) {
             alert(response);
             location.reload();
         },
-        error: function(xhr, status, error) {
-            alert("Помилка: " + error);
+        error: function(error) {
+            handleAjaxError(error);
         }
     });
 }
@@ -271,18 +268,18 @@ function insertTaskResult(input) {
             console.log(response);
             location.reload();
         },
-        error: function(xhr, status, error) {
-            alert("Помилка при відправці даних до сервера, оцінка завелике ", error);
+        error: function(error) {
+            handleAjaxError(error);
         }
     });
 }
 
 function updateTaskResult(input) {
     var resultId = input.dataset.resultId;
-    var fscore = input.value;
+    var score  = input.value;
 
 
-    if (resultId && (fscore == null || fscore == undefined || fscore == "")) {
+    if (resultId && (score  == null || score  == undefined || score  == "")) {
         $.ajax({
             type: "DELETE",
             url: "/deleteTaskResult",
@@ -293,14 +290,19 @@ function updateTaskResult(input) {
                 console.log(response);
                 location.reload();
             },
-            error: function(xhr, status, error) {
-                alert("Помилка при відправці даних до сервера:", error); 
+            error: function(error) {
+                let errorMessage = "Помилка при відправці даних до сервера";
+                if (error.responseJSON && error.responseJSON.message) {
+                    errorMessage += " Json: " + error.responseJSON.message;
+                } else if (error.responseText) {
+                    errorMessage += " Text: " + error.responseText;
+                }
+    
+                alert(errorMessage);
             }
         })
         return;
     }
-
-    var score = parseFloat(fscore);
 
     if (score < 0) {
         console.log("Помилка: Результат не може бути менше 0");
@@ -314,8 +316,28 @@ function updateTaskResult(input) {
             console.log(response);
             location.reload();
         },
-        error: function(xhr, status, error) {
-            alert("Помилка при відправці даних до сервера:", error);
+        error: function(error) {
+            handleAjaxError(error);
         }
     });
+}
+
+function handleAjaxError(error) {
+    let errorMessage = "Помилка при відправці даних до сервера";
+    let detailedMessage = errorMessage;
+    let shortMessage = errorMessage;
+
+    if (error.responseJSON && error.responseJSON.message) {
+        detailedMessage += " JSON: " + error.responseJSON.message;
+    } else if (error.responseText) {
+        detailedMessage += " Text: " + error.responseText;
+    }
+
+    let match = detailedMessage.match(/ОШИБКА: (.+?)\n/);
+    if (match && match[1]) {
+        shortMessage += ":\n" + match[1];
+    }
+
+    console.log(detailedMessage);
+    alert(shortMessage);
 }
