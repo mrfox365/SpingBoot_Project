@@ -10,6 +10,9 @@ import com.jamavcode.prog.model.Subject;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реалізація інтерфейсу {@link SubjectRepository}.
+ */
 @Repository
 public class SubjectRepositoryImpl implements SubjectRepository {
 

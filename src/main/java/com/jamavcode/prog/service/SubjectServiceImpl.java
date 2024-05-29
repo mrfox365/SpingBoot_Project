@@ -5,10 +5,13 @@ import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.jamavcode.prog.exception.SubjectNotFoundExeption;
+import com.jamavcode.prog.exception.SubjectNotFoundException;
 import com.jamavcode.prog.model.Subject;
 import com.jamavcode.prog.repository.SubjectRepository;
 
+/**
+ * Реалізація інтерфейсу {@link SubjectService}.
+ */
 @Primary
 @Service
 public class SubjectServiceImpl implements SubjectService {
@@ -27,7 +30,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public Subject getSubjectById(int subject_id){
         return subjectRepository.getSubjectsById(subject_id)
-            .orElseThrow(() -> new SubjectNotFoundExeption(subject_id));
+            .orElseThrow(() -> new SubjectNotFoundException(subject_id));
     }
 
     @Override 
@@ -38,14 +41,14 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public void updateSubjectById(String title, String description, int subject_id){
         var subject = subjectRepository.getSubjectsById(subject_id)
-            .orElseThrow(() -> new SubjectNotFoundExeption(subject_id));
+            .orElseThrow(() -> new SubjectNotFoundException(subject_id));
         subjectRepository.updateSubjectById(title, description, subject.subject_id());
     }
 
     @Override
     public void deleteSubjectById(int subject_id){
         var subject = subjectRepository.getSubjectsById(subject_id)
-            .orElseThrow(() -> new SubjectNotFoundExeption(subject_id));
+            .orElseThrow(() -> new SubjectNotFoundException(subject_id));
         subjectRepository.deleteSubjectById(subject.subject_id());
     }
 

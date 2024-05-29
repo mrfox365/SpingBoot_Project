@@ -10,6 +10,9 @@ import com.jamavcode.prog.model.Task;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реалізація інтерфейсу {@link TaskRepository}.
+ */
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
 

@@ -14,6 +14,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реалізація інтерфейсу {@link StudentRepository}.
+ */
 @Repository
 public class StudentRepositoryImpl implements StudentRepository {
 

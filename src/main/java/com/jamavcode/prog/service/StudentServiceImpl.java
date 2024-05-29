@@ -6,10 +6,13 @@ import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.jamavcode.prog.exception.StudentNotFoundExeption;
+import com.jamavcode.prog.exception.StudentNotFoundException;
 import com.jamavcode.prog.model.Student;
 import com.jamavcode.prog.repository.StudentRepository;
 
+/**
+ * Реалізація інтерфейсу {@link StudentService}.
+ */
 @Primary
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -33,7 +36,7 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student getStudentById(int student_id){
         return studentRepository.getStudentById(student_id)
-            .orElseThrow(() -> new StudentNotFoundExeption(student_id));
+            .orElseThrow(() -> new StudentNotFoundException(student_id));
     }
 
     @Override
@@ -54,14 +57,14 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public void updateStudentById(String first_name, String last_name, LocalDate date_of_birth, String group_name, int student_id){
         var student = studentRepository.getStudentById(student_id)
-            .orElseThrow(() -> new StudentNotFoundExeption(student_id));
+            .orElseThrow(() -> new StudentNotFoundException(student_id));
         studentRepository.updateStudentById(first_name, last_name, date_of_birth, group_name, student.student_id());
     }
 
     @Override
     public void deleteStudentById(int student_id, int subject_id){
         var student = studentRepository.getStudentById(student_id)
-            .orElseThrow(() -> new StudentNotFoundExeption(student_id));
+            .orElseThrow(() -> new StudentNotFoundException(student_id));
         studentRepository.deleteStudentById(student.student_id(), subject_id);
     }
 

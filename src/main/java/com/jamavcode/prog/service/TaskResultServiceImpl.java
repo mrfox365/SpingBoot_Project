@@ -5,11 +5,14 @@ import java.util.List;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.jamavcode.prog.exception.TaskNotFoundExeption;
-import com.jamavcode.prog.exception.TaskResultNotFoundExeption;
+import com.jamavcode.prog.exception.TaskNotFoundException;
+import com.jamavcode.prog.exception.TaskResultNotFoundException;
 import com.jamavcode.prog.model.TaskResult;
 import com.jamavcode.prog.repository.TaskResultRepository;
 
+/**
+ * Реалізація інтерфейсу {@link TaskResultService}.
+ */
 @Primary
 @Service
 public class TaskResultServiceImpl implements TaskResultService {
@@ -43,7 +46,7 @@ public class TaskResultServiceImpl implements TaskResultService {
     @Override
     public TaskResult getTaskResultById(int result_id){
         return taskResultRepository.getTaskResultById(result_id)
-            .orElseThrow(() -> new TaskNotFoundExeption(result_id));
+            .orElseThrow(() -> new TaskNotFoundException(result_id));
     }
 
     @Override
@@ -54,14 +57,14 @@ public class TaskResultServiceImpl implements TaskResultService {
     @Override
     public void updateTaskResultById(double score, int result_id){
         var taskResult = taskResultRepository.getTaskResultById(result_id)
-            .orElseThrow(() -> new TaskResultNotFoundExeption(result_id));
+            .orElseThrow(() -> new TaskResultNotFoundException(result_id));
         taskResultRepository.updateTaskResultById(score, taskResult.result_id());
     }
 
     @Override
     public void deleteTaskResultById(int result_id){
         var taskResult = taskResultRepository.getTaskResultById(result_id)
-            .orElseThrow(() -> new TaskResultNotFoundExeption(result_id));
+            .orElseThrow(() -> new TaskResultNotFoundException(result_id));
         taskResultRepository.deleteTaskResultById(taskResult.result_id());
     }
 

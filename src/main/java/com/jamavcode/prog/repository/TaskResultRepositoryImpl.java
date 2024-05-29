@@ -10,6 +10,9 @@ import com.jamavcode.prog.model.TaskResult;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Реалізація інтерфейсу {@link TaskResultRepository}.
+ */
 @Repository
 public class TaskResultRepositoryImpl implements TaskResultRepository {
 
