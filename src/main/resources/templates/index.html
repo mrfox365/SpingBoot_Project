@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}"></title>
+    <link rel="stylesheet" type="text/css" href="http://127.0.0.1:8080/styles.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="left">
+            <h3 id="subjectTitle" th:if="${needSubject != null}" th:text="${needSubject.title}"></h3> 
+        </div>
+
+        <h1 id="pageTitle">
+            <a th:href="@{/}" style="text-decoration: none; color: black;">
+                <span th:text="${pageTitle}"></span>
+            </a>
+        </h1>
+
+        <div class="right">
+            <p id="teacherName"  th:text="${teacherName}"></p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="subjects-container">
+            <a th:each="subject : ${subjects}" th:href="@{/subjects/{subjectId}(subjectId=${subject.subject_id})}" class="subject-ref">
+                <button class="edit-button" 
+                        th:data-subject-id="${subject.subject_id}" 
+                        th:data-subject-title="${subject.title}" 
+                        th:data-subject-description="${subject.description}" 
+                        onclick="event.preventDefault(); openModal(event, 'updateSubjectModal')">
+                </button>
+                <div class="subject-ref-text" th:text="${subject.title}"></div>
+            </a>
+            <button class="add-button" onclick="openModal(event, 'insertSubjectModal')">Add Subject</button>
+        </div>
+
+        <div class="table_container">
+            <table id="table">
+                <thead>
+                    <tr>
+                        <th>Студенти</th>
+                        <th th:each="task : ${tasks}">
+                            <button th:text="${task.title}" 
+                                    th:data-task-id="${task.task_id}"
+                                    th:data-task-title="${task.title}"
+                                    th:data-task-content="${task.content}"
+                                    th:data-task-max-score="${task.max_score}"
+                                    onclick="openModal(event, 'updateTaskModal')">
+                            </button>
+                        </th>
+                        <th>
+                            <button onclick="openModal(event, 'insertTaskModal')">+</button>
+                        </th>
+                        <th>Сумарні оцінки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="student : ${students}">
+                        <td class="studentTD">
+                            <button th:text="${student.first_name + ' ' + student.last_name}"
+                                    th:data-student-id="${student.student_id}"
+                                    th:data-student-first-name="${student.first_name}"
+                                    th:data-student-last-name="${student.last_name}"
+                                    th:data-student-date-of-birth="${student.date_of_birth}"
+                                    th:data-student-group-name="${student.group_name}"
+                                    onclick="openModal(event, 'updateStudentModal')">
+                            </button>
+                        </td>
+                        <td class="taskResultTD" th:each="task : ${tasks}" th:data-task-id="${task.task_id}" th:data-student-id="${student.student_id}">
+                            <input type="number"
+                                   th:data-task-id="${task.task_id}"
+                                   th:data-student-id="${student.student_id}"
+                                   th:each="taskRes : ${taskResults}" 
+                                   th:if="${taskRes.student_id == student.student_id and taskRes.task_id == task.task_id}" 
+                                   th:data-result-id="${taskRes.result_id}"
+                                   th:value="${taskRes.score}"
+                                   onchange="updateTaskResult(this)">
+                        </td>
+                        <td class="noInputTD"></td>
+                        <td class="sumTaskResultTD noInputTD"
+                            th:each="sum : ${taskResultsSum}"
+                            th:if="${sum.student_id == student.student_id and sum.result_id == needSubject.subject_id}"
+                            th:text="${sum.score}"
+                        ></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onclick="openModal(event, 'insertStudentModal')">+</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Середні оцінки</td>
+                        <td class="noInputTD" th:each="task : ${tasks}">
+                            <case th:each="aver : ${taskResultsAverTask}"
+                            th:if="${aver.task_id == task.task_id and aver.result_id == needSubject.subject_id}"
+                            th:text="${aver.score}"></case>
+                        </td>
+                        <td class="noInputTD"></td>
+                        <td class="averSubTD noInputTD" th:each="aver : ${taskResultsAverSub}" th:if="${aver.result_id == needSubject.subject_id}" th:text="${aver.score}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="insertSubjectModal" class="modal">
+        <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        <h2>Додати Дисципліну</h2>
+
+        <form id="insertSubjectForm" class="modalForm startDisplayForm" method="post" action="/insertSubject">
+            <input type="text" id="addSubjectTitle" name="title" placeholder="Назва дисципліни" required>
+            <input type="text" id="addSubjectDescription" name="description" placeholder="Опис дисципліни" required>
+            <button type="submit">Додати</button>
+        </form>
+
+    </div>
+
+    <div id="updateSubjectModal" class="modal">
+        <div>
+            <button type="button" id="deleteSubjectButton" style="background-color: red; color: white;" data-subject-id="0" onclick="deleteSubject(event)">Видалити</button>
+            <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        </div>
+
+        <h2>Редагування дисципліни</h2>
+
+        <form id="updateSubjectForm" class="modalForm startDisplayForm">
+            <input type="text" id="updateSubjectTitle" name="title" placeholder="Нова назва дисципліни" required>
+            <input type="text" id="updateSubjectDescription" name="description" placeholder="Новий опис дисципліни" required>
+            <input type="hidden" id="updateSubjectId" name="subject_id" value="0"/>
+            <button type="submit">Оновити</button>
+        </form>
+
+    </div>
+
+    <div id="insertStudentModal" class="modal">
+        <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        <h2>Додати Студента</h2>
+
+        <button class="buttonModal" onclick="showForm('insertNewStudentForm')">Додати нового студента</button>
+        <button class="buttonModal" onclick="showForm('insertAlreadyExistStudentForm')">Додати існуючого студента</button>
+
+        <form id="insertNewStudentForm" class="modalForm noStartDisplayForm" method="post" action="/insertStudentAndSubject">
+            <input type="text" id="addStudentFirstName" name="first_name" placeholder="Ім'я студента" required>
+            <input type="text" id="addStudentLastName" name="last_name" placeholder="Прізвище студента" required>
+            <input type="date" id="addStudentDateOfBirth" name="date_of_birth" placeholder="Дата народження" required>
+            <input type="text" id="addStudentGroupName" name="group_name" placeholder="Назва групи" required>
+            <input type="hidden" name="subject_id" th:if="${needSubject != null}" th:value="${needSubject.subject_id}"/>
+            <button type="submit">Додати</button>
+        </form>
+
+        <form id="insertAlreadyExistStudentForm" class="modalForm noStartDisplayForm" method="post" action="/insertStudentSubject">
+            <label for="selectStudent">Виберіть студента:</label>
+            <select id="selectStudent" name="student_id" required>
+                <option value="" disabled selected>Виберіть студента</option>
+                <option th:each="student : ${studentsReverse}" th:value="${student.student_id}" th:text="${student.first_name + ' ' + student.last_name}"></option>
+            </select>
+            <input type="hidden" name="subject_id" th:if="${needSubject != null}" th:value="${needSubject.subject_id}"/>
+            <button type="submit">Додати</button>
+        </form>
+
+    </div>
+
+    <div id="updateStudentModal" class="modal">
+        <div>
+            <button type="button" id="deleteStudentButton" style="background-color: red; color: white;" 
+                data-student-id="0" 
+                th:if="${needSubject != null}" th:data-subject-id="${needSubject.subject_id}"
+                onclick="deleteStudent(event)">Видалити
+            </button>
+            <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        </div>
+    
+        <h2>Редагування студента</h2>
+    
+        <form id="updateStudentForm" class="modalForm startDisplayForm">
+            <input type="text" id="updateStudentFirstName" name="first_name" placeholder="Ім'я студента" required>
+            <input type="text" id="updateStudentLastName" name="last_name" placeholder="Прізвище студента" required>
+            <input type="date" id="updateStudentDateOfBirth" name="date_of_birth" placeholder="Дата народження" required>
+            <input type="text" id="updateStudentGroupName" name="group_name" placeholder="Назва групи" required>
+            <input type="hidden" id="updateStudentId" name="student_id" value="0"/>
+            <button type="submit">Оновити</button>
+        </form>
+    </div>
+
+    <div id="insertTaskModal" class="modal">
+        <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        <h2>Додати Завдання</h2>
+    
+        <form id="insertTaskForm" class="modalForm startDisplayForm" method="post" action="/insertTask">
+            <input type="text" id="addTaskTitle" name="title" placeholder="Назва завдання" required>
+            <textarea id="addTaskContent" name="content" placeholder="Опис завдання" required></textarea>
+            <input type="number" id="addTaskMaxScore" name="max_score" placeholder="Максимальна оцінка" required>
+            <input type="hidden" name="subject_id" th:if="${needSubject != null}" th:value="${needSubject.subject_id}"/>
+            <button type="submit">Додати</button>
+        </form>
+    </div>
+    
+    <div id="updateTaskModal" class="modal">
+        <div>
+            <button type="button" id="deleteTaskButton" style="background-color: red; color: white;" data-task-id="0" onclick="deleteTask(event)">Видалити</button>
+            <button class="close-btn" onclick="closeModals()"><i class="fas fa-times"></i></button>
+        </div>
+    
+        <h2>Редагування завдання</h2>
+    
+        <form id="updateTaskForm" class="modalForm startDisplayForm">
+            <input type="text" id="updateTaskTitle" name="title" placeholder="Нова назва завдання" required>
+            <textarea id="updateTaskContent" name="content" placeholder="Новий опис завдання" required></textarea>
+            <input type="number" id="updateTaskMaxScore" name="max_score" placeholder="Максимальна оцінка" required>
+            <input type="hidden" id="updateTaskId" name="task_id" value="0"/>
+            <button type="submit">Оновити</button>
+        </form>
+    </div>
+
+    <div class="overlay" onclick="closeModals()"></div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://127.0.0.1:8080/scripts.js?v=<?php echo time(); ?>"></script>
+</body>
+</html>
