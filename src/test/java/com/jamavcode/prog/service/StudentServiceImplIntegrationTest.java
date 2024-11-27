@@ -33,10 +33,10 @@ class StudentServiceImplIntegrationTest {
 
         testStudent = new Student(
             1, 
-            "John", 
-            "Doe", 
-            LocalDate.of(2000, 1, 1), 
-            "GroupA"
+            "Dima", 
+            "Bereznuy", 
+            LocalDate.of(2004, 1, 1), 
+            "Group13"
         );
     }
 
@@ -67,7 +67,7 @@ class StudentServiceImplIntegrationTest {
     @Test
     void testInsertStudent() {
         // Act
-        studentService.insertStudent("John", "Doe", LocalDate.of(2000, 1, 1), "GroupA");
+        studentService.insertStudent("Dima", "Bereznuy", LocalDate.of(2004, 1, 1), "Group13");
 
         // Assert
         ArgumentCaptor<String> firstNameCaptor = ArgumentCaptor.forClass(String.class);
@@ -82,10 +82,10 @@ class StudentServiceImplIntegrationTest {
             groupNameCaptor.capture()
         );
 
-        assertEquals("John", firstNameCaptor.getValue());
-        assertEquals("Doe", lastNameCaptor.getValue());
-        assertEquals(LocalDate.of(2000, 1, 1), dobCaptor.getValue());
-        assertEquals("GroupA", groupNameCaptor.getValue());
+        assertEquals("Dima", firstNameCaptor.getValue());
+        assertEquals("Bereznuy", lastNameCaptor.getValue());
+        assertEquals(LocalDate.of(2004, 1, 1), dobCaptor.getValue());
+        assertEquals("Group13", groupNameCaptor.getValue());
     }
 
     @Test
@@ -109,11 +109,11 @@ class StudentServiceImplIntegrationTest {
         when(studentRepository.getStudentById(1)).thenReturn(Optional.of(testStudent));
 
         // Act
-        studentService.updateStudentById("Jane", "Smith", LocalDate.of(1999, 5, 15), "GroupB", 1);
+        studentService.updateStudentById("Miroslav", "Bahman", LocalDate.of(2003, 5, 15), "Group13", 1);
 
         // Assert
         verify(studentRepository, times(1)).updateStudentById(
-            "Jane", "Smith", LocalDate.of(1999, 5, 15), "GroupB", 1
+            "Miroslav", "Bahman", LocalDate.of(2003, 5, 15), "Group13", 1
         );
     }
 
@@ -132,11 +132,11 @@ class StudentServiceImplIntegrationTest {
     @Test
     void testInsertStudentAndSubject() {
         // Act
-        studentService.insertStudentAndSubject("John", "Doe", LocalDate.of(2000, 1, 1), "GroupA", 101);
+        studentService.insertStudentAndSubject("Dima", "Bereznuy", LocalDate.of(2004, 1, 1), "Group13", 101);
 
         // Assert
         verify(studentRepository, times(1)).insertStudentAndSubject(
-            "John", "Doe", LocalDate.of(2000, 1, 1), "GroupA", 101
+            "Dima", "Bereznuy", LocalDate.of(2004, 1, 1), "Group13", 101
         );
     }
 }
