@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.jamavcode.prog.mapper.SubjectMapper;
 import com.jamavcode.prog.model.Subject;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +44,8 @@ public class SubjectRepositoryImpl implements SubjectRepository {
         SubjectMapper subjectMapper,
         NamedParameterJdbcTemplate jdbcTemplate
     ){
-        this.subjectMapper = subjectMapper;
-        this.jdbcTemplate = jdbcTemplate;
+        this.subjectMapper = Objects.requireNonNull(subjectMapper, "subjectMapper is null");
+        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is null");
     }
 
     @Override

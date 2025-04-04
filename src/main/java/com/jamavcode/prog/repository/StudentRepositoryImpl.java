@@ -11,6 +11,7 @@ import com.jamavcode.prog.model.Student;
 import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,8 +58,8 @@ public class StudentRepositoryImpl implements StudentRepository {
         StudentMapper studentMapper,
         NamedParameterJdbcTemplate jdbcTemplate
     ){
-        this.studentMapper = studentMapper;
-        this.jdbcTemplate = jdbcTemplate;
+        this.studentMapper = Objects.requireNonNull(studentMapper, "studentMapper is null");
+        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is null");
     }
 
     @Override
@@ -116,7 +117,11 @@ public class StudentRepositoryImpl implements StudentRepository {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(SQL_INSERT_STUDENT, params, keyHolder, new String[]{"student_id"});
 
-        int student_id = keyHolder.getKey().intValue();
+        Number key = keyHolder.getKey();
+        if (key == null) {
+            throw new IllegalStateException("Не вдалося отримати student_id після вставки студента");
+        }
+        int student_id = key.intValue();
 
         params = new MapSqlParameterSource();
         params.addValue("student_id", student_id);

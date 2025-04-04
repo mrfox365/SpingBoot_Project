@@ -3,7 +3,7 @@
 <module name="Checker">
     <!-- Виключення файлів до початку перевірки -->
     <module name="BeforeExecutionExclusionFileFilter">
-        <property name="fileNamePattern" value=".*\\(maper|model|repository|)\\.*\.java$"/>
+        <property name="fileNamePattern" value=".*\\(maper|model)\\.*\.java$"/>
     </module>
 
     <module name="TreeWalker">
