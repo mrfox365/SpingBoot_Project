@@ -26,6 +26,7 @@ import jakarta.validation.Valid;
 
 import com.jamavcode.prog.service.TaskResultService;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Map;
 
@@ -59,10 +60,10 @@ public class ProgController {
             TaskService taskService,
             TaskResultService taskResultService
     ){
-        this.subjectService = subjectService;
-        this.studentService = studentService;
-        this.taskService = taskService;
-        this.taskResultService = taskResultService;
+        this.subjectService = Objects.requireNonNull(subjectService, "subjectService is null");
+        this.studentService = Objects.requireNonNull(studentService, "studentService is null");
+        this.taskService = Objects.requireNonNull(taskService, "taskService is null");
+        this.taskResultService = Objects.requireNonNull(taskResultService, "taskResultService is null");
     }
 
     /**
