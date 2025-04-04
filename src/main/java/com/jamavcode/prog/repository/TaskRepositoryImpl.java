@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.jamavcode.prog.mapper.TaskMapper;
 import com.jamavcode.prog.model.Task;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,8 +43,8 @@ public class TaskRepositoryImpl implements TaskRepository {
         TaskMapper taskMapper,
         NamedParameterJdbcTemplate jdbcTemplate
     ){
-        this.taskMapper = taskMapper;
-        this.jdbcTemplate = jdbcTemplate;
+        this.taskMapper = Objects.requireNonNull(taskMapper, "taskMapper is null");
+        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is null");
     }
 
     @Override

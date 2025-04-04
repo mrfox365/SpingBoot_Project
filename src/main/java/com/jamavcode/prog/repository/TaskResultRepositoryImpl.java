@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.jamavcode.prog.mapper.TaskResultMapper;
 import com.jamavcode.prog.model.TaskResult;
 
+import java.util.Objects;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,8 +61,8 @@ public class TaskResultRepositoryImpl implements TaskResultRepository {
         TaskResultMapper taskResultMapper,
         NamedParameterJdbcTemplate jdbcTemplate
     ){
-        this.taskResultMapper = taskResultMapper;
-        this.jdbcTemplate = jdbcTemplate;
+        this.taskResultMapper = Objects.requireNonNull(taskResultMapper, "taskResultMapper is null");
+        this.jdbcTemplate = Objects.requireNonNull(jdbcTemplate, "jdbcTemplate is null");
     }
 
     @Override

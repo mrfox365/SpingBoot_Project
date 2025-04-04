@@ -1,6 +1,7 @@
 package com.jamavcode.prog.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class SubjectServiceImpl implements SubjectService {
     private final SubjectRepository subjectRepository;
 
     public SubjectServiceImpl(SubjectRepository subjectRepository){
-        this.subjectRepository = subjectRepository;
+        this.subjectRepository = Objects.requireNonNull(subjectRepository, "subjectRepository is null");
     }
 
     @Override

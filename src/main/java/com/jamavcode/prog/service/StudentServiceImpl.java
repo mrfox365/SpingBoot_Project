@@ -1,6 +1,7 @@
 package com.jamavcode.prog.service;
 
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.List;
 
 import org.springframework.context.annotation.Primary;
@@ -20,7 +21,7 @@ public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
 
     public StudentServiceImpl (StudentRepository studentRepository){
-        this.studentRepository = studentRepository;
+        this.studentRepository = Objects.requireNonNull(studentRepository, "studentRepository is null");
     }
 
     @Override

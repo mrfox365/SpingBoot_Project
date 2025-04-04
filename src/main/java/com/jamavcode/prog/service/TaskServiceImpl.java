@@ -1,6 +1,7 @@
 package com.jamavcode.prog.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
 
     public TaskServiceImpl(TaskRepository taskRepository){
-        this.taskRepository = taskRepository;
+        this.taskRepository = Objects.requireNonNull(taskRepository, "taskRepository is null");
     }
 
     @Override
