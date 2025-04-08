@@ -9,6 +9,8 @@
     <module name="TreeWalker">
         <module name="JavadocMethod"/>
         <module name="JavadocType"/>
+        <module name="JavadocStyle"/>
+        <module name="JavadocParagraph"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="EmptyBlock"/>
         <module name="FinalClass"/>
