@@ -131,6 +131,26 @@
 				<version>4.9.3.0</version>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
+				<configuration>
+					<encoding>UTF-8</encoding>
+					<source>17</source>
+					<docencoding>UTF-8</docencoding>
+					<charset>UTF-8</charset>
+					<show>public</show>
+				</configuration>
+				<executions>
+					<execution>
+					<goals>
+						<goal>javadoc</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 
