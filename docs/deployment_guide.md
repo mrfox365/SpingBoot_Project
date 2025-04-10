@@ -76,3 +76,4 @@ tail -f /var/log/classroom-app/app.log
 Тест API:
 curl http://localhost:8080/api/students
 Перевірка UI/публічної сторінки
+
