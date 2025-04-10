@@ -29,39 +29,38 @@ After downloading the project, to run the program, execute the ProgApplication.j
 
 Note: Make sure your PostgreSQL database is running before launching the program.
 
-🚧 Стандарти та правила документування коду
+Code Documentation Standards and Rules
 
-Щоб підтримувати чисту, зрозумілу і послідовну базу коду, кожен учасник повинен дотримуватись таких **вимог до документування**:
+To maintain a clean, understandable and consistent code base, each participant must comply with the following **documentation requirements**:
 
-1. Javadoc для класів та методів
+1. Javadoc for Classes and Methods
 
-- Обов'язково додавай `Javadoc` для **публічних класів**, **методів**, і **інтерфейсів**.
-- Коротко описуй призначення та параметри.
-- Приклад:
+- Be sure to add 'Javadoc' for **public classes**, **methods**, and **interfaces**.
+- Briefly describe the purpose and parameters.
+-Example:
 
 ```java
 /**
- * Сервіс для обробки запитів користувача.
- */
+* Service for processing user requests.
+*/
 public class UserService {
 
-    /**
-     * Знаходить користувача за ID.
-     *
-     * @param id ID користувача
-     * @return об'єкт користувача
-     * @throws UserNotFoundException якщо користувача не знайдено
-     */
-    public User getUserById(Long id) { ... }
+/**
+* Finds the user by ID.
+*
+* @param user ID
+* @return user object
+* @throws UserNotFoundException if no user is found
+*/
+public User getUserById(Long id) { ... }
 }
 
-2. Коментарі в коді
-Коментуй лише нелогічні або складні місця в коді.
+2. Comments in the code
+Comment only on illogical or difficult places in the code.
 
-Уникай надлишкових коментарів типу // інкремент.
+Avoid excessive comments like // increment.
 
-// Перевірка токена перед виконанням запиту
+Validate the token before executing the request
 if (!authService.isTokenValid(token)) {
-    throw new UnauthorizedException();
+throw new UnauthorizedException();
 }
-
