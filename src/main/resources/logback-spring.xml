@@ -6,16 +6,24 @@
 
     <!-- Console appender -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- Encoder configuration for the log сonsole format -->
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <!-- File appender -->
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>${LOG_FILE}</file>
-        <append>true</append>
+    <!-- Rolling File appender for log rotation (by time) -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+        <!-- Specify log file rolling policy by time -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/app-%d{yyyy-MM-dd}.log</fileNamePattern> <!-- Log file pattern with timestamp -->
+            <maxHistory>30</maxHistory> <!-- Number of days of logs to retain -->
+            <totalSizeCap>1GB</totalSizeCap> <!-- Total size of log files to retain -->
+        </rollingPolicy>
+
+        <!-- Encoder configuration for the log file format -->
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
@@ -25,7 +33,7 @@
     <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="ROLLING_FILE"/>
     </root>
 
     <!-- Logger for package -->
