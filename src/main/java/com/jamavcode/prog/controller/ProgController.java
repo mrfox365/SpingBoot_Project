@@ -30,6 +30,9 @@ import java.util.Objects;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -45,6 +48,8 @@ public class ProgController {
     private final StudentService studentService;
     private final TaskService taskService;
     private final TaskResultService taskResultService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProgController.class);
 
     /**
      * Конструктор класу контролера.
@@ -127,11 +132,18 @@ public class ProgController {
     @PostMapping("/insertSubject")
     @ResponseBody
     public ResponseEntity<String> addSubject(@Valid SubjectRequest subjectRequest) {
-        try {
+           try {
+            logger.info("POST /insertSubject - Спроба додати предмет: {}", subjectRequest.title());
+            logger.debug("Деталі предмета: title='{}', description='{}'", subjectRequest.title(), subjectRequest.description());
+
             subjectService.insertSubject(subjectRequest.title(), subjectRequest.description());
+            logger.info("Предмет успішно додано: {}", subjectRequest.title());
+
             return ResponseEntity.ok("Subject added successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add subject: " + e.getMessage());
+            logger.error("Помилка при додаванні предмету: {}", e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Failed to add subject: " + e.getMessage());
         }
     }
 
@@ -146,12 +158,18 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> updateSubject(@PathVariable("subject_id") int subject_id, @RequestBody @Valid SubjectRequest subjectRequest) {
         try {
+            logger.info("PUT /updateSubject/{} - Спроба оновити предмет", subject_id);
+            logger.debug("Деталі нового предмета: title='{}', description='{}'", subjectRequest.title(), subjectRequest.description());
+            logger.info("Updating subject with ID: {}", subject_id);
+
             subjectService.updateSubjectById(subjectRequest.title(), subjectRequest.description(), subject_id);
             return ResponseEntity.ok("Subject updated successfully");
         } catch (Exception e) {
+            logger.error("Failed to update subject with ID {}: {}", subject_id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update subject: " + e.getMessage());
         }
     }
+    
 
     /**
      * Метод для обробки DELETE-запитів на видалення предмету за його ідентифікатором.
@@ -163,9 +181,13 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> deleteSubject(@RequestParam int subject_id) {
         try {
+            logger.info("DELETE /deleteSubject - Спроба видалити предмет з ID: {}", subject_id);
+            logger.info("Deleting subject with ID: {}", subject_id);
+
             subjectService.deleteSubjectById(subject_id);
             return ResponseEntity.ok("Subject deleted successfully");
         } catch (Exception e) {
+            logger.error("Failed to delete subject with ID {}: {}", subject_id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete subject: " + e.getMessage());
         }
     }
@@ -181,10 +203,15 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> addStudentAndSubject(@RequestParam("subject_id") int subject_id, @Valid StudentRequest studentRequest) {
         try {
+            logger.info("POST /insertStudentAndSubject - Додавання студента до предмета з ID: {}", subject_id);
+            logger.debug("Дані студента: {} {}", studentRequest.first_name(), studentRequest.last_name());
+            logger.info("Adding student to subject ID: {}", subject_id);
+
             studentService.insertStudentAndSubject(studentRequest.first_name(), studentRequest.last_name(), studentRequest.date_of_birth(), studentRequest.group_name(), subject_id);
             return ResponseEntity.ok("Student added successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add Student : " + e.getMessage());
+            logger.error("Failed to add student to subject ID {}: {}", subject_id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add student: " + e.getMessage());
         }
     }
 
@@ -199,10 +226,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> addStudentSubject(@RequestParam("student_id") int student_id, @RequestParam("subject_id") int subject_id) {
         try {
+            logger.info("POST /insertStudentSubject - Додавання студента з ID {} до предмета з ID {}", student_id, subject_id);
+            logger.info("Adding existing student ID: {} to subject ID: {}", student_id, subject_id);
+
             studentService.insertStudentSubject(student_id, subject_id);
             return ResponseEntity.ok("Student added successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add Student : " + e.getMessage());
+            logger.error("Failed to add student ID {} to subject ID {}: {}", student_id, subject_id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add student: " + e.getMessage());
         }
     }
 
@@ -217,9 +248,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> updateStudent(@PathVariable("student_id") int student_id, @RequestBody @Valid StudentRequest studentRequest) {
         try {
+            logger.info("PUT /updateStudent/{} - Спроба оновити студента", student_id);
+            logger.debug("Дані: {} {}, {}, {}", studentRequest.first_name(), studentRequest.last_name(), studentRequest.date_of_birth(), studentRequest.group_name());
+            logger.info("Updating student with ID: {}", student_id);
+
             studentService.updateStudentById(studentRequest.first_name(), studentRequest.last_name(), studentRequest.date_of_birth(), studentRequest.group_name(), student_id);
             return ResponseEntity.ok("Student updated successfully");
         } catch (Exception e) {
+            logger.error("Failed to update student with ID {}: {}", student_id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update student: " + e.getMessage());
         }
     }
@@ -233,13 +269,17 @@ public class ProgController {
     @DeleteMapping("/deleteStudent")
     @ResponseBody
     public ResponseEntity<String> deleteStudent(@RequestBody Map<String, Integer> payload) {
-        try{
+        try {
             int studentId = payload.get("student_id");
             int subjectId = payload.get("subject_id");
+            logger.info("DELETE /deleteStudent - Спроба видалити студента з ID: {} з предмету ID: {}", studentId, subjectId);
+            logger.info("Deleting student with ID: {} from subject ID: {}", studentId, subjectId);
+            
             studentService.deleteStudentById(studentId, subjectId);
             return ResponseEntity.ok("Student deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Student : " + e.getMessage());
+            logger.error("Failed to delete student: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete student: " + e.getMessage());
         }
     }
 
@@ -253,9 +293,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> addTask(@Valid TaskRequestInsert taskRequest) {
         try {
+            logger.info("POST /insertTask - Спроба додати завдання: {}", taskRequest.title());
+            logger.debug("Зміст: '{}', Максимальний бал: {}, ID предмету: {}", taskRequest.content(), taskRequest.max_score(), taskRequest.subject_id());
+            logger.info("Inserting task for subject ID: {}", taskRequest.subject_id());
+
             taskService.insertTask(taskRequest.title(), taskRequest.content(), taskRequest.max_score(), taskRequest.subject_id());
             return ResponseEntity.ok("Task added successfully");
         } catch (Exception e) {
+            logger.error("Failed to add task: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add task: " + e.getMessage());
         }
     }
@@ -271,9 +316,13 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> updateTask(@PathVariable("task_id") int task_id, @RequestBody @Valid TaskRequestUpdate taskRequest) {
         try {
+            logger.info("PUT /updateTask/{} - Оновлення завдання: {}", task_id, taskRequest.title());
+            logger.info("Updating task with ID: {}", task_id);
+
             taskService.updateTaskById(taskRequest.title(), taskRequest.content(), taskRequest.max_score(), task_id);
             return ResponseEntity.ok("Task updated successfully");
         } catch (Exception e) {
+            logger.error("Failed to update task with ID {}: {}", task_id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update task: " + e.getMessage());
         }
     }
@@ -288,10 +337,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> deleteTask(@RequestParam int task_id) {
         try {
+            logger.info("DELETE /deleteTask - Спроба видалити завдання з ID: {}", task_id);
+            logger.info("Deleting task with ID: {}", task_id);
+
             taskService.deleteTaskById(task_id);
             return ResponseEntity.ok("Task deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Task: " + e.getMessage());
+            logger.error("Failed to delete task with ID {}: {}", task_id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete task: " + e.getMessage());
         }
     }
 
@@ -305,10 +358,15 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> addTaskResult(@Valid TaskResultRequest taskResultRequest) {
         try {
+            logger.info("POST /insertTaskResult - Спроба додати результат для завдання ID: {} і студента ID: {}", taskResultRequest.task_id(), taskResultRequest.student_id());
+            logger.debug("Оцінка: {}", taskResultRequest.score());
+            logger.info("Inserting result for task ID: {} and student ID: {}", taskResultRequest.task_id(), taskResultRequest.student_id());
+
             taskResultService.insertTaskResult(taskResultRequest.task_id(), taskResultRequest.student_id(), taskResultRequest.score());
             return ResponseEntity.ok("Result added successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add task: " + e.getMessage());
+            logger.error("Failed to insert result: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add result: " + e.getMessage());
         }
     }
 
@@ -323,10 +381,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> updateTaskResult(@PathVariable("result_id") int result_id, @PathVariable("score") double score) {
         try {
+            logger.info("PUT /updateTaskResult/{}/{} - Оновлення результату: нова оцінка {}", result_id, score, score);
+            logger.info("Updating result ID: {} with new score: {}", result_id, score);
+
             taskResultService.updateTaskResultById(score, result_id);
             return ResponseEntity.ok("Result updated successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update task: " + e.getMessage());
+            logger.error("Failed to update result ID {}: {}", result_id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update result: " + e.getMessage());
         }
     }
 
@@ -340,10 +402,14 @@ public class ProgController {
     @ResponseBody
     public ResponseEntity<String> deleteTaskResult(@RequestParam int result_id) {
         try {
+            logger.info("DELETE /deleteTaskResult - Спроба видалити результат з ID: {}", result_id);
+            logger.info("Deleting task result with ID: {}", result_id);
+
             taskResultService.deleteTaskResultById(result_id);
             return ResponseEntity.ok("Result deleted successfully");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete Task: " + e.getMessage());
+            logger.error("Failed to delete task result with ID {}: {}", result_id, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete result: " + e.getMessage());
         }
     }
 
